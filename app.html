@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevCraft Live Workshop Showcase</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                        }
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                            '50%': { opacity: '.6', transform: 'scale(1.05)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100,100,100,0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100,100,100,0.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-cyan-500 selection:text-white transition-colors duration-300" id="app-body">
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-800/80 px-4 lg:px-8 py-3.5 transition-colors duration-300" id="main-nav">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
+                    <i data-lucide="terminal" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">DevCraft Live</span>
+                    <span class="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Workshop v2.4</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-4">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700 flex items-center gap-2 text-sm font-medium" title="Toggle Theme (Alt+T)">
+                    <i data-lucide="moon" id="theme-icon" class="w-4 h-4 text-cyan-400"></i>
+                    <span class="hidden md:inline" id="theme-label">Dark Mode</span>
+                </button>
+
+                <!-- Preset Selector for Presenter -->
+                <div class="relative group">
+                    <button class="px-3 py-1.5 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-400 border border-cyan-500/30 text-sm font-medium flex items-center gap-2 transition-all">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>Presets</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-48 py-2 bg-slate-900 rounded-xl shadow-2xl border border-slate-800 opacity-0 group-hover:opacity-100 transition-all pointer-events-none group-hover:pointer-events-auto z-50">
+                        <button onclick="applyPreset('cyber')" class="w-full px-4 py-2 text-left text-xs text-slate-300 hover:bg-slate-800 hover:text-cyan-400 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Cyberpunk Dark
+                        </button>
+                        <button onclick="applyPreset('emerald')" class="w-full px-4 py-2 text-left text-xs text-slate-300 hover:bg-slate-800 hover:text-emerald-400 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Bio-Tech Emerald
+                        </button>
+                        <button onclick="applyPreset('sunset')" class="w-full px-4 py-2 text-left text-xs text-slate-300 hover:bg-slate-800 hover:text-amber-400 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-amber-400"></span> Sunset Neon
+                        </button>
+                        <button onclick="applyPreset('clean-light')" class="w-full px-4 py-2 text-left text-xs text-slate-300 hover:bg-slate-800 hover:text-blue-400 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-slate-200"></span> Minimal Light
+                        </button>
+                    </div>
+                </div>
+
+                <a href="#sandbox-section" class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium text-sm transition-all shadow-md shadow-cyan-500/20 flex items-center gap-2">
+                    <i data-lucide="code" class="w-4 h-4"></i>
+                    <span>Live Demo</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-16">
+
+        <!-- 1. HERO SECTION -->
+        <section class="relative pt-6 pb-12 overflow-hidden">
+            <!-- Background Glow Decorations -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+            
+            <div class="text-center max-w-3xl mx-auto space-y-6 relative z-10">
+                <!-- Animated Dynamic Tag/Badge -->
+                <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-900/90 border border-cyan-500/30 text-xs font-semibold text-cyan-400 shadow-xl backdrop-blur-md">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+                    </span>
+                    <span id="hero-dynamic-tag">LIVE WORKSHOP MODE ACTIVE</span>
+                    <i data-lucide="zap" class="w-3.5 h-3.5 text-cyan-400"></i>
+                </div>
+
+                <!-- Hero Headline -->
+                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-100 leading-tight">
+                    Build, Experiment & <br>
+                    <span class="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-500 bg-clip-text text-transparent" id="hero-gradient-text">Master Live UI Engineering</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                    Welcome to today's hands-on workshop! Adjust real-time parameters, test live components, and vote in interactive audience polls directly on screen.
+                </p>
+
+                <!-- Hero Action Buttons -->
+                <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+                    <button onclick="scrollToSection('sandbox-section')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-5 h-5"></i>
+                        Open Live Sandbox
+                    </button>
+                    <button onclick="scrollToSection('engagement-section')" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-semibold transition-all flex items-center gap-2">
+                        <i data-lucide="vote" class="w-5 h-5 text-cyan-400"></i>
+                        Audience Polls
+                    </button>
+                </div>
+
+                <!-- Live Metrics Bar -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-10 border-t border-slate-800/80 text-left">
+                    <div class="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60">
+                        <div class="text-slate-400 text-xs font-medium">Workshop Participants</div>
+                        <div class="text-2xl font-bold text-slate-100 mt-1 flex items-center gap-2">
+                            <span id="participant-count">142</span>
+                            <span class="text-xs text-emerald-400 font-normal">↑ Live</span>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60">
+                        <div class="text-slate-400 text-xs font-medium">Active Theme</div>
+                        <div class="text-2xl font-bold text-cyan-400 mt-1 capitalize" id="current-theme-name">Cyan Dark</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60">
+                        <div class="text-slate-400 text-xs font-medium">Components Loaded</div>
+                        <div class="text-2xl font-bold text-slate-100 mt-1">12 Modules</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60">
+                        <div class="text-slate-400 text-xs font-medium">Poll Status</div>
+                        <div class="text-2xl font-bold text-emerald-400 mt-1 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Open
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 2. INTERACTIVE LIVE CODE SANDBOX & CONTROL PANEL -->
+        <section id="sandbox-section" class="scroll-mt-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
+                <div>
+                    <div class="flex items-center gap-2 text-cyan-400 text-sm font-semibold tracking-wide uppercase mb-1">
+                        <i data-lucide="sliders" class="w-4 h-4"></i>
+                        <span>Live Sandbox & Control Panel</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-100">Interactive UI Customizer</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="resetSandbox()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-all">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset Default
+                    </button>
+                    <button onclick="copyGeneratedConfig()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-600/20 text-cyan-400 hover:bg-cyan-600/30 border border-cyan-500/30 flex items-center gap-1.5 transition-all">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Config JS
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Controls Side (5 Cols) -->
+                <div class="lg:col-span-5 space-y-5 bg-slate-900/90 rounded-2xl border border-slate-800 p-5 shadow-xl backdrop-blur-md">
+                    <h3 class="text-sm font-semibold text-slate-300 border-b border-slate-800 pb-3 flex items-center gap-2">
+                        <i data-lucide="settings" class="w-4 h-4 text-cyan-400"></i>
+                        Live Controls
+                    </h3>
+
+                    <!-- Accent Color Picker -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-medium text-slate-400 flex justify-between">
+                            <span>Accent Color Theme</span>
+                            <span id="color-val-display" class="text-cyan-400 font-mono">Cyan</span>
+                        </label>
+                        <div class="grid grid-cols-5 gap-2">
+                            <button onclick="setAccentColor('cyan', '#06b6d4')" class="h-9 rounded-lg bg-cyan-500 border-2 border-white/20 focus:border-white transition-all flex items-center justify-center text-white" title="Cyan"></button>
+                            <button onclick="setAccentColor('emerald', '#10b981')" class="h-9 rounded-lg bg-emerald-500 border-2 border-transparent focus:border-white transition-all flex items-center justify-center text-white" title="Emerald"></button>
+                            <button onclick="setAccentColor('violet', '#8b5cf6')" class="h-9 rounded-lg bg-violet-500 border-2 border-transparent focus:border-white transition-all flex items-center justify-center text-white" title="Violet"></button>
+                            <button onclick="setAccentColor('amber', '#f59e0b')" class="h-9 rounded-lg bg-amber-500 border-2 border-transparent focus:border-white transition-all flex items-center justify-center text-white" title="Amber"></button>
+                            <button onclick="setAccentColor('rose', '#f43f5e')" class="h-9 rounded-lg bg-rose-500 border-2 border-transparent focus:border-white transition-all flex items-center justify-center text-white" title="Rose"></button>
+                        </div>
+                    </div>
+
+                    <!-- Typography Scale Slider -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-medium text-slate-400">
+                            <span>Base Font Size</span>
+                            <span id="font-size-display" class="text-cyan-400 font-mono">16px</span>
+                        </div>
+                        <input type="range" id="font-size-slider" min="13" max="20" value="16" oninput="updateFontSize(this.value)" class="w-full accent-cyan-500 bg-slate-800 rounded-lg h-2 cursor-pointer">
+                    </div>
+
+                    <!-- Border Radius Slider -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-medium text-slate-400">
+                            <span>Border Roundedness</span>
+                            <span id="radius-display" class="text-cyan-400 font-mono">12px</span>
+                        </div>
+                        <input type="range" id="radius-slider" min="0" max="24" value="12" oninput="updateBorderRadius(this.value)" class="w-full accent-cyan-500 bg-slate-800 rounded-lg h-2 cursor-pointer">
+                    </div>
+
+                    <!-- Layout Options -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-medium text-slate-400">Preview Layout Style</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="btn-layout-grid" onclick="setLayoutStyle('grid')" class="py-2 px-3 rounded-lg bg-cyan-500/20 border border-cyan-500 text-cyan-400 text-xs font-medium flex items-center justify-center gap-2 transition-all">
+                                <i data-lucide="grid" class="w-3.5 h-3.5"></i> Grid View
+                            </button>
+                            <button id="btn-layout-list" onclick="setLayoutStyle('list')" class="py-2 px-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 text-xs font-medium flex items-center justify-center gap-2 transition-all">
+                                <i data-lucide="list" class="w-3.5 h-3.5"></i> List View
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Feature Toggles -->
+                    <div class="space-y-3 pt-2 border-t border-slate-800">
+                        <label class="text-xs font-medium text-slate-400">Component Props Toggles</label>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-slate-300">Show Glow Effects</span>
+                            <input type="checkbox" id="toggle-glow" checked onchange="toggleGlowEffect(this.checked)" class="w-4 h-4 accent-cyan-500 rounded cursor-pointer">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-slate-300">Show Badges</span>
+                            <input type="checkbox" id="toggle-badges" checked onchange="toggleBadges(this.checked)" class="w-4 h-4 accent-cyan-500 rounded cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Side (7 Cols) -->
+                <div class="lg:col-span-7 flex flex-col space-y-4">
+                    <!-- Live Canvas Container -->
+                    <div class="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-xl flex-grow flex flex-col justify-between transition-all" id="demo-preview-card">
+                        <div>
+                            <div class="flex items-center justify-between pb-4 border-b border-slate-800/80 mb-6">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+                                    <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+                                    <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+                                    <span class="text-xs font-mono text-slate-500 ml-2">Live UI Component Output</span>
+                                </div>
+                                <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-cyan-400 font-mono border border-slate-700">Reactive Rendering</span>
+                            </div>
+
+                            <!-- Dynamically Customized UI Component -->
+                            <div id="preview-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Card 1 -->
+                                <div class="sandbox-card p-5 bg-slate-800/60 border border-slate-700/60 rounded-xl transition-all hover:border-cyan-500/50" id="card-1">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 dynamic-accent-bg dynamic-accent-text" id="icon-bg-1">
+                                            <i data-lucide="cpu" class="w-5 h-5"></i>
+                                        </div>
+                                        <span class="badge-item text-[10px] font-semibold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Active</span>
+                                    </div>
+                                    <h4 class="font-semibold text-slate-100 mb-1" id="preview-text-1">System Core Module</h4>
+                                    <p class="text-slate-400 text-xs leading-relaxed">High performance computation layer processing real-time telemetry data.</p>
+                                    <button class="mt-4 w-full py-2 px-3 rounded-lg bg-cyan-500 text-slate-950 font-medium text-xs shadow-md transition-all hover:brightness-110 dynamic-button" id="btn-1">Execute Action</button>
+                                </div>
+
+                                <!-- Card 2 -->
+                                <div class="sandbox-card p-5 bg-slate-800/60 border border-slate-700/60 rounded-xl transition-all hover:border-cyan-500/50" id="card-2">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 dynamic-accent-bg dynamic-accent-text" id="icon-bg-2">
+                                            <i data-lucide="database" class="w-5 h-5"></i>
+                                        </div>
+                                        <span class="badge-item text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Syncing</span>
+                                    </div>
+                                    <h4 class="font-semibold text-slate-100 mb-1" id="preview-text-2">Data Persistence</h4>
+                                    <p class="text-slate-400 text-xs leading-relaxed">Automated local cache syncing with millisecond response latency.</p>
+                                    <button class="mt-4 w-full py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs border border-slate-700 transition-all">Inspect Pipeline</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Code Snippet Display -->
+                        <div class="mt-6 pt-4 border-t border-slate-800">
+                            <div class="text-xs font-mono text-slate-400 mb-2 flex items-center justify-between">
+                                <span>Generated Configuration State:</span>
+                            </div>
+                            <pre class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 text-xs font-mono text-cyan-300 overflow-x-auto"><code id="code-output">{
+  "accent": "cyan",
+  "fontSize": "16px",
+  "borderRadius": "12px",
+  "layout": "grid",
+  "glow": true
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 3. AUDIENCE ENGAGEMENT SUITE (POLL & FEATURE TOUR) -->
+        <section id="engagement-section" class="scroll-mt-20 space-y-10">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <div class="inline-flex items-center gap-1.5 text-cyan-400 text-sm font-semibold tracking-wide uppercase">
+                    <i data-lucide="users" class="w-4 h-4"></i>
+                    <span>Workshop Participation</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-100">Live Audience Poll & Interactive Quiz</h2>
+                <p class="text-slate-400 text-sm">Cast your vote or take a quick assessment to engage with the live presentation.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Live Poll Widget -->
+                <div class="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-xl space-y-5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                            <h3 class="font-bold text-slate-100 flex items-center gap-2">
+                                <i data-lucide="bar-chart-2" class="w-5 h-5 text-cyan-400"></i>
+                                Live Poll: Favorite Tech Stack Focus?
+                            </h3>
+                            <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">Active</span>
+                        </div>
+
+                        <div class="space-y-3" id="poll-options-container">
+                            <!-- Poll Option 1 -->
+                            <button onclick="votePoll(0)" class="w-full text-left p-3.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 transition-all relative overflow-hidden group">
+                                <div class="absolute top-0 left-0 bottom-0 bg-cyan-500/20 transition-all duration-500" id="poll-bar-0" style="width: 45%;"></div>
+                                <div class="relative z-10 flex items-center justify-between text-xs font-medium">
+                                    <span class="text-slate-200 group-hover:text-cyan-400 transition-colors">React & Modern Next.js Frameworks</span>
+                                    <span class="text-cyan-400 font-mono" id="poll-percent-0">45% (64)</span>
+                                </div>
+                            </button>
+
+                            <!-- Poll Option 2 -->
+                            <button onclick="votePoll(1)" class="w-full text-left p-3.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 transition-all relative overflow-hidden group">
+                                <div class="absolute top-0 left-0 bottom-0 bg-cyan-500/20 transition-all duration-500" id="poll-bar-1" style="width: 32%;"></div>
+                                <div class="relative z-10 flex items-center justify-between text-xs font-medium">
+                                    <span class="text-slate-200 group-hover:text-cyan-400 transition-colors">Tailwind CSS & Utility-First Styling</span>
+                                    <span class="text-cyan-400 font-mono" id="poll-percent-1">32% (46)</span>
+                                </div>
+                            </button>
+
+                            <!-- Poll Option 3 -->
+                            <button onclick="votePoll(2)" class="w-full text-left p-3.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 transition-all relative overflow-hidden group">
+                                <div class="absolute top-0 left-0 bottom-0 bg-cyan-500/20 transition-all duration-500" id="poll-bar-2" style="width: 23%;"></div>
+                                <div class="relative z-10 flex items-center justify-between text-xs font-medium">
+                                    <span class="text-slate-200 group-hover:text-cyan-400 transition-colors">Serverless API & Edge Computing</span>
+                                    <span class="text-cyan-400 font-mono" id="poll-percent-2">23% (33)</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                        <span id="total-votes-count">Total Votes: 143</span>
+                        <span class="text-cyan-400 font-medium">Click any option to vote!</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Tech Feature Tour / Accordion -->
+                <div class="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-xl space-y-4">
+                    <div class="border-b border-slate-800 pb-3 mb-4">
+                        <h3 class="font-bold text-slate-100 flex items-center gap-2">
+                            <i data-lucide="compass" class="w-5 h-5 text-cyan-400"></i>
+                            Interactive Feature Breakdown
+                        </h3>
+                    </div>
+
+                    <div class="space-y-3" id="feature-tour-accordion">
+                        <!-- Tour Item 1 -->
+                        <div class="border border-slate-800 rounded-xl overflow-hidden transition-all">
+                            <button onclick="toggleAccordion('tour-1')" class="w-full p-3.5 bg-slate-800/40 text-left text-sm font-semibold text-slate-200 flex items-center justify-between hover:bg-slate-800">
+                                <span class="flex items-center gap-2">
+                                    <i data-lucide="zap" class="w-4 h-4 text-cyan-400"></i> Fast Reactive Updates
+                                </span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform" id="icon-tour-1"></i>
+                            </button>
+                            <div id="tour-1" class="p-4 bg-slate-950/50 text-xs text-slate-400 leading-relaxed border-t border-slate-800/60 hidden">
+                                State changes take effect instantly across components without needing page reloads, making rapid iteration effortless during live coding demonstrations.
+                            </div>
+                        </div>
+
+                        <!-- Tour Item 2 -->
+                        <div class="border border-slate-800 rounded-xl overflow-hidden transition-all">
+                            <button onclick="toggleAccordion('tour-2')" class="w-full p-3.5 bg-slate-800/40 text-left text-sm font-semibold text-slate-200 flex items-center justify-between hover:bg-slate-800">
+                                <span class="flex items-center gap-2">
+                                    <i data-lucide="palette" class="w-4 h-4 text-cyan-400"></i> Adaptive Color Tokens
+                                </span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform" id="icon-tour-2"></i>
+                            </button>
+                            <div id="tour-2" class="p-4 bg-slate-950/50 text-xs text-slate-400 leading-relaxed border-t border-slate-800/60 hidden">
+                                Seamless integration of CSS variables and utility classes enables seamless light/dark mode transitions and flexible branding customization.
+                            </div>
+                        </div>
+
+                        <!-- Tour Item 3 -->
+                        <div class="border border-slate-800 rounded-xl overflow-hidden transition-all">
+                            <button onclick="toggleAccordion('tour-3')" class="w-full p-3.5 bg-slate-800/40 text-left text-sm font-semibold text-slate-200 flex items-center justify-between hover:bg-slate-800">
+                                <span class="flex items-center gap-2">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i> Accessible & Responsive Design
+                                </span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform" id="icon-tour-3"></i>
+                            </button>
+                            <div id="tour-3" class="p-4 bg-slate-950/50 text-xs text-slate-400 leading-relaxed border-t border-slate-800/60 hidden">
+                                Fully adaptable across desktop, tablet, and mobile displays with standardized touch targets and readable dynamic contrast ratios.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <i data-lucide="code" class="w-4 h-4 text-cyan-400"></i>
+                <span>DevCraft Workshop Live Demo Platform</span>
+            </div>
+            <p>Built for interactive tech presentations and live coding workshops.</p>
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 px-4 py-3 rounded-xl bg-slate-900 border border-cyan-500/40 text-cyan-300 text-xs shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 flex items-center gap-2.5 z-50">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400"></i>
+        <span id="toast-msg">Settings saved successfully!</span>
+    </div>
+
+    <!-- Application Script Logic -->
+    <script>
+        // State Management
+        const state = {
+            isDarkMode: true,
+            accentName: 'cyan',
+            accentHex: '#06b6d4',
+            fontSize: 16,
+            borderRadius: 12,
+            layout: 'grid',
+            showGlow: true,
+            showBadges: true,
+            votes: [64, 46, 33]
+        };
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // DOM Elements
+        const appBody = document.getElementById('app-body');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeLabel = document.getElementById('theme-label');
+        const codeOutput = document.getElementById('code-output');
+
+        // Theme Toggle Logic
+        themeToggleBtn.addEventListener('click', toggleTheme);
+
+        function toggleTheme() {
+            state.isDarkMode = !state.isDarkMode;
+            if (state.isDarkMode) {
+                document.documentElement.classList.add('dark');
+                appBody.classList.replace('bg-slate-50', 'bg-slate-950');
+                appBody.classList.replace('text-slate-800', 'text-slate-100');
+                themeIcon.setAttribute('data-lucide', 'moon');
+                themeLabel.textContent = 'Dark Mode';
+            } else {
+                document.documentElement.classList.remove('dark');
+                appBody.classList.replace('bg-slate-950', 'bg-slate-50');
+                appBody.classList.replace('text-slate-100', 'text-slate-800');
+                themeIcon.setAttribute('data-lucide', 'sun');
+                themeLabel.textContent = 'Light Mode';
+            }
+            lucide.createIcons();
+            showToast(`Switched to ${state.isDarkMode ? 'Dark' : 'Light'} Mode`);
+        }
+
+        // Accent Color Handler
+        function setAccentColor(name, hex) {
+            state.accentName = name;
+            state.accentHex = hex;
+            
+            document.getElementById('color-val-display').textContent = name.charAt(0).toUpperCase() + name.slice(1);
+            document.getElementById('current-theme-name').textContent = `${name} ${state.isDarkMode ? 'Dark' : 'Light'}`;
+
+            // Update Dynamic Elements
+            const buttons = document.querySelectorAll('.dynamic-button');
+            buttons.forEach(btn => {
+                btn.style.backgroundColor = hex;
+            });
+
+            updateCodeOutput();
+            showToast(`Accent theme updated to ${name}`);
+        }
+
+        // Font Size Handler
+        function updateFontSize(val) {
+            state.fontSize = val;
+            document.getElementById('font-size-display').textContent = `${val}px`;
+            
+            document.getElementById('preview-text-1').style.fontSize = `${val}px`;
+            document.getElementById('preview-text-2').style.fontSize = `${val}px`;
+            updateCodeOutput();
+        }
+
+        // Border Radius Handler
+        function updateBorderRadius(val) {
+            state.borderRadius = val;
+            document.getElementById('radius-display').textContent = `${val}px`;
+
+            const cards = document.querySelectorAll('.sandbox-card');
+            cards.forEach(card => {
+                card.style.borderRadius = `${val}px`;
+            });
+            updateCodeOutput();
+        }
+
+        // Layout Style Handler
+        function setLayoutStyle(style) {
+            state.layout = style;
+            const container = document.getElementById('preview-container');
+            const btnGrid = document.getElementById('btn-layout-grid');
+            const btnList = document.getElementById('btn-layout-list');
+
+            if (style === 'grid') {
+                container.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+                btnGrid.className = 'py-2 px-3 rounded-lg bg-cyan-500/20 border border-cyan-500 text-cyan-400 text-xs font-medium flex items-center justify-center gap-2 transition-all';
+                btnList.className = 'py-2 px-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 text-xs font-medium flex items-center justify-center gap-2 transition-all';
+            } else {
+                container.className = 'flex flex-col space-y-4';
+                btnList.className = 'py-2 px-3 rounded-lg bg-cyan-500/20 border border-cyan-500 text-cyan-400 text-xs font-medium flex items-center justify-center gap-2 transition-all';
+                btnGrid.className = 'py-2 px-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 text-xs font-medium flex items-center justify-center gap-2 transition-all';
+            }
+            updateCodeOutput();
+        }
+
+        // Glow Effect Toggle
+        function toggleGlowEffect(enabled) {
+            state.showGlow = enabled;
+            const previewCard = document.getElementById('demo-preview-card');
+            if (enabled) {
+                previewCard.classList.add('shadow-cyan-500/10', 'shadow-2xl');
+            } else {
+                previewCard.classList.remove('shadow-cyan-500/10', 'shadow-2xl');
+            }
+            updateCodeOutput();
+        }
+
+        // Badge Toggle
+        function toggleBadges(enabled) {
+            state.showBadges = enabled;
+            const badges = document.querySelectorAll('.badge-item');
+            badges.forEach(b => {
+                b.style.display = enabled ? 'inline-block' : 'none';
+            });
+            updateCodeOutput();
+        }
+
+        // Update Code Display
+        function updateCodeOutput() {
+            codeOutput.textContent = JSON.stringify({
+                accent: state.accentName,
+                fontSize: `${state.fontSize}px`,
+                borderRadius: `${state.borderRadius}px`,
+                layout: state.layout,
+                glow: state.showGlow,
+                badges: state.showBadges
+            }, null, 2);
+        }
+
+        // Presets for Workshop Presenter
+        function applyPreset(preset) {
+            if (preset === 'cyber') {
+                if(!state.isDarkMode) toggleTheme();
+                setAccentColor('cyan', '#06b6d4');
+                updateBorderRadius(12);
+                setLayoutStyle('grid');
+            } else if (preset === 'emerald') {
+                if(!state.isDarkMode) toggleTheme();
+                setAccentColor('emerald', '#10b981');
+                updateBorderRadius(8);
+            } else if (preset === 'sunset') {
+                if(!state.isDarkMode) toggleTheme();
+                setAccentColor('amber', '#f59e0b');
+                updateBorderRadius(18);
+            } else if (preset === 'clean-light') {
+                if(state.isDarkMode) toggleTheme();
+                setAccentColor('violet', '#8b5cf6');
+                updateBorderRadius(10);
+            }
+        }
+
+        // Reset Sandbox Defaults
+        function resetSandbox() {
+            setAccentColor('cyan', '#06b6d4');
+            updateFontSize(16);
+            document.getElementById('font-size-slider').value = 16;
+            updateBorderRadius(12);
+            document.getElementById('radius-slider').value = 12;
+            setLayoutStyle('grid');
+            document.getElementById('toggle-glow').checked = true;
+            document.getElementById('toggle-badges').checked = true;
+            toggleGlowEffect(true);
+            toggleBadges(true);
+            showToast("Sandbox reset to default state");
+        }
+
+        // Copy Config Code
+        function copyGeneratedConfig() {
+            const codeText = codeOutput.textContent;
+            navigator.clipboard.writeText(codeText).then(() => {
+                showToast("Configuration JS copied to clipboard!");
+            }).catch(() => {
+                // Fallback using legacy execCommand
+                const textarea = document.createElement('textarea');
+                textarea.value = codeText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast("Configuration JS copied to clipboard!");
+            });
+        }
+
+        // Voting Poll Functionality
+        function votePoll(index) {
+            state.votes[index]++;
+            const total = state.votes.reduce((a, b) => a + b, 0);
+
+            for (let i = 0; i < state.votes.length; i++) {
+                const percentage = Math.round((state.votes[i] / total) * 100);
+                document.getElementById(`poll-bar-${i}`).style.width = `${percentage}%`;
+                document.getElementById(`poll-percent-${i}`).textContent = `${percentage}% (${state.votes[i]})`;
+            }
+
+            document.getElementById('total-votes-count').textContent = `Total Votes: ${total}`;
+            showToast("Your vote has been counted!");
+        }
+
+        // Feature Tour Accordion Toggle
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(`icon-${id}`);
+            const isHidden = content.classList.contains('hidden');
+
+            if (isHidden) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Smooth Scroll Helper
+        function scrollToSection(sectionId) {
+            const elem = document.getElementById(sectionId);
+            if(elem) {
+                elem.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Toast Notification System
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.textContent = msg;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // Dynamic Badge Animation Simulation
+        const tags = [
+            "LIVE WORKSHOP MODE ACTIVE",
+            "HANDS-ON UI DEMO",
+            "INTERACTIVE SANDBOX READY"
+        ];
+        let tagIndex = 0;
+        setInterval(() => {
+            tagIndex = (tagIndex + 1) % tags.length;
+            const tagElem = document.getElementById('hero-dynamic-tag');
+            if(tagElem) {
+                tagElem.textContent = tags[tagIndex];
+            }
+        }, 4000);
+    </script>
+</body>
+</html>
